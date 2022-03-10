@@ -13,6 +13,7 @@ int counter = 0;//Track which index was pushed in first for FIFO
 int numberOfEmptyslots = 0;//Track number of empty slots
 int pageFaults = 0;//Track number of page faults
 bool change = false;//To check if there is a change needed in Frame
+int choice = 0;
 
 
 void initArrays();//inititalize the arrays
@@ -21,19 +22,53 @@ void LRU(int frame[]);//LRU algorithim
 
 int main()
 {
+
+    printf("Please select an algorithim\n");
+    printf("1.First In First Out (FIFO)\n");
+    printf("2.Optimal page replacement algorithm\n");
+    printf("3)Least recently used (LRU) page replacement algorithm\n");
+    scanf("%d",&choice);
+
+    fflush(stdin);
+   
+
     //Get user input for referenced string
     printf("Enter referenced string(range of 20-30 frames): ");
     fgets(str,INPUTLIMIT,stdin);
 
-    //Get user input for frame size
-    printf("\nenter frame size(range of 3-6 frames): ");
+
+     //Get user input for frame size
+    printf("\nEnter frame size(range of 3-6 frames): ");
     scanf("%d",&frameSize);
     numberOfEmptyslots = frameSize;
 
     int frame[frameSize];
+
+    //getchar();
+    
+    //scanf("%s",str);
+
+
+   
     initArrays(frame);
-    FIFO(frame);
-    //LRU(frame);
+    //FIFO(frame);
+     switch (choice)
+    {
+    case 1:
+        FIFO(frame);
+        break;
+    case 2:
+        //FIFO(frame);
+        break;
+
+    case 3:
+        LRU(frame);
+        break;
+    
+    default:
+        break;
+    }
+
 
   
     return 0;
@@ -60,7 +95,8 @@ void initArrays(int frame[])
             break;
         else
         {
-            if(str[i] == ',')
+            //check for commas or spaces
+            if(str[i] == ',' || str[i] == ' ' )
                 continue;
             else
             {
@@ -138,16 +174,16 @@ void FIFO(int frame[])
             printf("\n");
         }    
     }
-     pageFaults = steps;
-     printf("There are %d page faults int this page replacement process",pageFaults);
+     printf("There are %d page faults in this page replacement process",steps);
 }
 
 
 void LRU(int frame[])
 {
     int pageSize = sizeof(refPages)/sizeof(refPages[0]);//To get size of array
-    int indexCount[frameSize];
-    int lru = 0;
+    int indexCount[frameSize];//To store time for each frame
+    int lru = 0;//index which will contain the LRU page
+
     //Check which was the least recently used page
     for(int i = 0; i < pageSize; ++ i)
     {
@@ -165,6 +201,12 @@ void LRU(int frame[])
                     //No changes needed if value is found
                     change = false;
                     indexCount[y] = 0;
+                    //Loop to add time to frames not affected
+                    for(int f = 0; f < frameSize; ++f)
+                    {
+                        if(f!=y)
+                            indexCount[f]+=1;
+                    }
                     break;
                 }
                 else
@@ -176,6 +218,7 @@ void LRU(int frame[])
         {
             for(int j = 0; j < frameSize; ++j)
             {
+                //Check for empty frames and fill first
                 if(numberOfEmptyslots > 0)
                 {                
                     if(frame[j] == -1)
@@ -184,30 +227,43 @@ void LRU(int frame[])
                         numberOfEmptyslots--;
                         steps++;
                         change = true;
-                            for(int k = 0; k < frameSize; ++k)
+                        //increment Time for the affected frames.
+                        for(int k = 0; k < frameSize; ++k)
+                        {
+                            if(frame[k] != -1)
                                 indexCount[k]+=1;
+                        }
                         break;
                     }
                     continue;
                 }
                 else
                 {       
-                    int temp = indexCount[0];
+                    int max = indexCount[0];
                     lru = 0;
-                    for(int k = 1; k<frameSize; ++k)
+                    //Find the index with the highest LRU time
+                    for(int x = 0; x<frameSize; ++x)
                     {
-                        if(indexCount[k] < temp)
+                        if(max < indexCount[x])
                         {
-                            temp = indexCount[k];
-                            lru = k;
+                            max = indexCount[x];
+                            lru = x;
                         }
                     }
+                    //Assign page to index
                     frame[lru] = refPages[i];
+                    indexCount[lru] = 0;
+
+                    //Increment time for frames not affected
+                    for(int y = 0; y < frameSize; ++y)
+                    {
+                        if(y!= lru)
+                            indexCount[y]+=1;
+                    }
                     change = true;
                     steps++;
                     break;
                 }
-                
             }
         }
             //If there is a change in frame, print out the current step
@@ -219,5 +275,7 @@ void LRU(int frame[])
                 printf("\n");
             }    
     }
+
+    printf("There are %d page faults in this page replacement process",steps);
 }
 
