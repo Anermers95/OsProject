@@ -19,6 +19,7 @@ int choice = 0;
 void initArrays();//inititalize the arrays
 void FIFO(int frame[]);//FIFO algorithim
 void LRU(int frame[]);//LRU algorithim
+void OPS(int frame[]); //OPS algorithim
 
 int main()
 {
@@ -58,7 +59,7 @@ int main()
         FIFO(frame);
         break;
     case 2:
-        //FIFO(frame);
+        OPS(frame);
         break;
 
     case 3:
@@ -279,3 +280,121 @@ void LRU(int frame[])
     printf("There are %d page faults in this page replacement process",steps);
 }
 
+void OPS(int frame[])
+{
+    int opsIdx=0;
+    bool present=false;
+    int largestArr[6]={0};
+    int largestIdx=0;
+    int pageSize = sizeof(refPages)/sizeof(refPages[0]);//To get size of array
+
+    int lastCharIdx=0; //to get len of str
+                    while(refPages[lastCharIdx]!=-1){
+                        lastCharIdx++;
+                    }
+                    lastCharIdx--; //arr start from 0
+
+    for(int i = 0; i < pageSize; ++ i)
+    {
+        change = true;
+        //Break if -1 is detected
+        if(refPages[i] == -1)
+            break;
+        else
+        {
+            //Check if value is already in frame.
+            for(int y = 0; y < frameSize; ++y)
+            {
+                if(frame[y] == refPages[i])
+                {
+                    //No changes needed if value is found
+                    change = false;
+                    break;
+                }
+                else
+                    //Change needed
+                    change = true; 
+            }
+        }
+        //If change is needed
+        if(change)
+        {
+            for(int j = 0; j < frameSize; ++j)
+            {
+                //Check for empty slots and fill the empty slots first.
+                if(numberOfEmptyslots > 0)
+                {                
+                    if(frame[j] == -1)
+                    {
+                        frame[j] = refPages[i];
+                        numberOfEmptyslots--;
+                        steps++;
+                        change = true;
+                        break;
+                    }
+                    continue;
+                }
+                //check if frame contain next string to be swap
+                else
+                {
+                    int lastCharIdxIn=lastCharIdx;
+                    
+
+                    for(int m=0;m<frameSize;m++){
+                        if(frame[m]==refPages[i]){
+                            present=true;
+                            break;
+                        }
+                    }
+                    //**found** skip string
+                    if(present==true)
+                        continue;
+                    
+                    bool done=false;
+                    int k=0;
+                    while(k<frameSize){
+                        int tempI=i;
+                        while(tempI<lastCharIdx+1){
+                            if(frame[k]==refPages[tempI]){    
+                                largestArr[k]=tempI;
+                                k++;
+                                tempI=i;
+                                break;
+                            }
+                            if(tempI==lastCharIdx){
+                                largestArr[k]=100;
+                                k++;
+                                tempI=i;
+                                break;
+                                }           
+                            else{
+                                tempI++;
+                            }
+                        }     
+                    }
+                    int currentMax=largestArr[0];
+                    int currentMaxIdx=0;
+                    for(int l=1;l<frameSize;l++){
+                        if (largestArr[l]>currentMax){
+                            currentMax=largestArr[l];
+                            currentMaxIdx=l;
+                        }
+                    }
+                    frame[currentMaxIdx] = refPages[i];
+                }  
+                change = true;
+                steps++;
+                break;
+            }  
+        }
+        //If there is a change in frame, print out the current step
+        if(change == true)
+        {
+            printf("Step %d: ",steps);
+            for(int n = 0; n < frameSize; ++n)
+                printf("%d\t",frame[n]);
+            printf("\n");
+        }    
+    }
+     printf("There are %d page faults in this page replacement process",steps);
+}
