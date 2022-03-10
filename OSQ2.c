@@ -282,17 +282,16 @@ void LRU(int frame[])
 
 void OPS(int frame[])
 {
-    int opsIdx=0;
+
     bool present=false;
-    int largestArr[6]={0};
-    int largestIdx=0;
+    int firstOccuranceArr[6]={0}; //to store the firstOccurance 
     int pageSize = sizeof(refPages)/sizeof(refPages[0]);//To get size of array
 
-    int lastCharIdx=0; //to get len of str
-                    while(refPages[lastCharIdx]!=-1){
-                        lastCharIdx++;
-                    }
-                    lastCharIdx--; //arr start from 0
+    int strLen=0; //to get len of str
+    while(refPages[strLen]!=-1){
+                    strLen++;
+                }
+    strLen--; //arr start from 0
 
     for(int i = 0; i < pageSize; ++ i)
     {
@@ -334,12 +333,10 @@ void OPS(int frame[])
                     }
                     continue;
                 }
-                //check if frame contain next string to be swap
+                
                 else
                 {
-                    int lastCharIdxIn=lastCharIdx;
-                    
-
+                    //check if frame contain next string to be swap
                     for(int m=0;m<frameSize;m++){
                         if(frame[m]==refPages[i]){
                             present=true;
@@ -350,19 +347,20 @@ void OPS(int frame[])
                     if(present==true)
                         continue;
                     
-                    bool done=false;
+                    //find the first occurance each var in the frame and store the index.
                     int k=0;
                     while(k<frameSize){
                         int tempI=i;
-                        while(tempI<lastCharIdx+1){
+                        //lastCharIdx+1 for the situation where the value is not found in the remaining list.
+                        while(tempI<strLen+1){
                             if(frame[k]==refPages[tempI]){    
-                                largestArr[k]=tempI;
+                                firstOccuranceArr[k]=tempI;
                                 k++;
                                 tempI=i;
                                 break;
                             }
-                            if(tempI==lastCharIdx){
-                                largestArr[k]=100;
+                            if(tempI==strLen){
+                                firstOccuranceArr[k]=MAXLIMIT+1; //Maxlimit+1 to indicate that the idx is no longer in the str
                                 k++;
                                 tempI=i;
                                 break;
@@ -372,14 +370,18 @@ void OPS(int frame[])
                             }
                         }     
                     }
-                    int currentMax=largestArr[0];
+                    //find the max index of the frame
+                    //use the first var as the max, if any other var is larger. it will be the max instead.
+                    //use currentMaxIdx to keep track of which frame idx to swap.
+                    int currentMax=firstOccuranceArr[0];
                     int currentMaxIdx=0;
                     for(int l=1;l<frameSize;l++){
-                        if (largestArr[l]>currentMax){
-                            currentMax=largestArr[l];
+                        if (firstOccuranceArr[l]>currentMax){
+                            currentMax=firstOccuranceArr[l];
                             currentMaxIdx=l;
                         }
                     }
+                    //change the frame with the max idx.
                     frame[currentMaxIdx] = refPages[i];
                 }  
                 change = true;
