@@ -44,9 +44,6 @@ int main()
 
     int frame[frameSize];
 
-    //getchar();
-    
-    //scanf("%s",str);
 
 
    
@@ -58,7 +55,6 @@ int main()
         FIFO(frame);
         break;
     case 2:
-        //FIFO(frame);
         break;
 
     case 3:
@@ -68,7 +64,6 @@ int main()
     default:
         break;
     }
-
 
   
     return 0;
