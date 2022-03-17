@@ -332,32 +332,31 @@ void OPS(int frame[])
                 
                 else
                 {
-                    //check if frame contain next string to be swap
-                    for(int m=0;m<frameSize;m++){
-                        if(frame[m]==refPages[i]){
-                            present=true;
+                    // iterate through the frame to check if it contains next string to be swap
+                    for(int m=0;m<frameSize;m++){ 
+                        if(frame[m]==refPages[i]){ //if found just break the loop, as only need to look for 1 match
+                            present=true;          //to prove that it is present.
                             break;
                         }
                     }
-                    //**found** skip string
-                    if(present==true)
-                        continue;
                     
-                    //find the first occurance each var in the frame and store the index.
+                    // iterate through the frame
+                    // find the first occurance each value in the frame and store the index.
+                    // This is to allow us to compare which value in the frame to be swapped
                     int k=0;
                     while(k<frameSize){
-                        int tempI=i;
+                        int tempI=i; //use tempI so to prevent conflict with outer loop 'i'
                         //lastCharIdx+1 for the situation where the value is not found in the remaining list.
                         while(tempI<strLen+1){
                             if(frame[k]==refPages[tempI]){    
-                                firstOccuranceArr[k]=tempI;
+                                firstOccuranceArr[k]=tempI; //store first occurance of frame in firstOccuranceArr[]
                                 k++;
                                 tempI=i;
                                 break;
                             }
-                            if(tempI==strLen){
-                                firstOccuranceArr[k]=MAXLIMIT+1; //Maxlimit+1 to indicate that the idx is no longer in the str
-                                k++;
+                            if(tempI==strLen){  //if remaining string doesn't contain the value in the frame
+                                firstOccuranceArr[k]=MAXLIMIT+1; //Maxlimit+1 indicate's that the index is out of bound
+                                k++;                          
                                 tempI=i;
                                 break;
                                 }           
@@ -366,18 +365,16 @@ void OPS(int frame[])
                             }
                         }     
                     }
-                    //find the max index of the frame
-                    //use the first var as the max, if any other var is larger. it will be the max instead.
-                    //use currentMaxIdx to keep track of which frame idx to swap.
-                    int currentMax=firstOccuranceArr[0];
-                    int currentMaxIdx=0;
-                    for(int l=1;l<frameSize;l++){
-                        if (firstOccuranceArr[l]>currentMax){
-                            currentMax=firstOccuranceArr[l];
-                            currentMaxIdx=l;
+                    //find Max algo: to get which frame index contain the largest value
+                    int currentMax=firstOccuranceArr[0]; //let the first value in firstOccuranceArr[0] to be max
+                    int currentMaxIdx=0; //to keep track of largest frame index
+                    for(int l=1;l<frameSize;l++){ 
+                        if (firstOccuranceArr[l]>currentMax){  //if value is larger then currentMax value.
+                            currentMax=firstOccuranceArr[l];   // it will be the new currentMax
+                            currentMaxIdx=l;    //update largest frame index
                         }
                     }
-                    //change the frame with the max idx.
+                    //swap the frame with the max index with the current string value.
                     frame[currentMaxIdx] = refPages[i];
                 }  
                 change = true;
