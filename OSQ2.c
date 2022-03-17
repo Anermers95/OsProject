@@ -19,7 +19,7 @@ int choice = 0;
 void initArrays();//inititalize the arrays
 void FIFO(int frame[]);//FIFO algorithim
 void LRU(int frame[]);//LRU algorithim
-void OPS(int frame[]); //OPS algorithim
+void OPT(int frame[]); //OPS algorithim
 
 int main()
 {
@@ -56,7 +56,7 @@ int main()
         FIFO(frame);
         break;
     case 2:
-        OPS(frame);
+        OPT(frame);
         break;
 
     case 3:
@@ -276,10 +276,9 @@ void LRU(int frame[])
     printf("There are %d page faults in this page replacement process",steps);
 }
 
-void OPS(int frame[])
+void OPT(int frame[])
 {
 
-    bool present=false;
     int firstOccuranceArr[6]={0}; //to store the firstOccurance 
     int pageSize = sizeof(refPages)/sizeof(refPages[0]);//To get size of array
 
@@ -335,11 +334,9 @@ void OPS(int frame[])
                     // iterate through the frame to check if it contains next string to be swap
                     for(int m=0;m<frameSize;m++){ 
                         if(frame[m]==refPages[i]){ //if found just break the loop, as only need to look for 1 match
-                            present=true;          //to prove that it is present.
-                            break;
+                            break;                                //to prove that it is present.
                         }
-                    }
-                    
+                    }          
                     // iterate through the frame
                     // find the first occurance each value in the frame and store the index.
                     // This is to allow us to compare which value in the frame to be swapped
