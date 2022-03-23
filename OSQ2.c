@@ -333,13 +333,7 @@ void OPT(int frame[])
                 }
                 
                 else
-                {
-                    // iterate through the  memory frame to check if it contains next ref string to be swap
-                    for(int m=0;m<frameSize;m++){ 
-                        if(frame[m]==refPages[i]){ //if found == page hit, no swap required.
-                            break;                 //Go to next page on ref string
-                        }
-                    }          
+                {         
                     /* iterate through the memory frame
                         find the first occurance(Index) of each page in the memory frame on the ref string
                         The larger the first occurance value mean it will not be used for the longest*/
