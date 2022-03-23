@@ -276,6 +276,8 @@ void LRU(int frame[])
     printf("There are %d page faults in this page replacement process",steps);
 }
 
+
+
 /*Optimal page replacement Algorithm:
     Replace pages that will not be used for the longest period of time
 */
@@ -340,7 +342,7 @@ void OPT(int frame[])
                     int k=0;
                     while(k<frameSize){
                         int firstOccuranceI=i; //use firstOccuranceI so to keep iterate through remaining pages on ref string
-                        while(firstOccuranceI<strLen+1){ //strLen +1 for the event, when remaining ref string does not contain the page in memory frame
+                        while(firstOccuranceI<=strLen){ 
                             if(frame[k]==refPages[firstOccuranceI]){    
                                 firstOccuranceArr[k]=firstOccuranceI; //store first occurance of memory frame's page in firstOccuranceArr[]
                                 k++;
