@@ -276,6 +276,9 @@ void LRU(int frame[])
     printf("There are %d page faults in this page replacement process",steps);
 }
 
+/*Optimal page replacement Algorithm:
+    Replace pages that will not be used for the longest period of time
+*/
 void OPT(int frame[])
 {
 
@@ -331,47 +334,49 @@ void OPT(int frame[])
                 
                 else
                 {
-                    // iterate through the frame to check if it contains next string to be swap
+                    // iterate through the  memory frame to check if it contains next ref string to be swap
                     for(int m=0;m<frameSize;m++){ 
-                        if(frame[m]==refPages[i]){ //if found just break the loop, as only need to look for 1 match
-                            break;                                //to prove that it is present.
+                        if(frame[m]==refPages[i]){ //if found == page hit, no swap required.
+                            break;                 //Go to next page on ref string
                         }
                     }          
-                    // iterate through the frame
-                    // find the first occurance each value in the frame and store the index.
-                    // This is to allow us to compare which value in the frame to be swapped
+                    /* iterate through the memory frame
+                        find the first occurance(Index) of each page in the memory frame on the ref string
+                        The larger the first occurance value mean it will not be used for the longest*/
                     int k=0;
                     while(k<frameSize){
-                        int tempI=i; //use tempI so to prevent conflict with outer loop 'i'
-                        //lastCharIdx+1 for the situation where the value is not found in the remaining list.
-                        while(tempI<strLen+1){
-                            if(frame[k]==refPages[tempI]){    
-                                firstOccuranceArr[k]=tempI; //store first occurance of frame in firstOccuranceArr[]
+                        int firstOccuranceI=i; //use firstOccuranceI so to keep iterate through remaining pages on ref string
+                        while(firstOccuranceI<strLen+1){ //strLen +1 for the event, when remaining ref string does not contain the page in memory frame
+                            if(frame[k]==refPages[firstOccuranceI]){    
+                                firstOccuranceArr[k]=firstOccuranceI; //store first occurance of memory frame's page in firstOccuranceArr[]
                                 k++;
-                                tempI=i;
+                                firstOccuranceI=i; //set back to i as have to get first occurance for all pages in memory frame
                                 break;
                             }
-                            if(tempI==strLen){  //if remaining string doesn't contain the value in the frame
+                            if(firstOccuranceI==strLen){  //if remaining ref string doesn't contain the memory page's frame
                                 firstOccuranceArr[k]=MAXLIMIT+1; //Maxlimit+1 indicate's that the index is out of bound
                                 k++;                          
-                                tempI=i;
+                                firstOccuranceI=i;
                                 break;
                                 }           
                             else{
-                                tempI++;
+                                firstOccuranceI++;
                             }
                         }     
                     }
-                    //find Max algo: to get which frame index contain the largest value
+                    /*find Max algo: 
+                        -To determine Victim frame
+                        - by retrieving the page in memory frame which has the largest firstOccurance value
+                    */
                     int currentMax=firstOccuranceArr[0]; //let the first value in firstOccuranceArr[0] to be max
-                    int currentMaxIdx=0; //to keep track of largest frame index
+                    int currentMaxIdx=0; //to keep track of largest first occurance index
                     for(int l=1;l<frameSize;l++){ 
-                        if (firstOccuranceArr[l]>currentMax){  //if value is larger then currentMax value.
+                        if (firstOccuranceArr[l]>currentMax){  //if first occurance index is larger then currentMax value.
                             currentMax=firstOccuranceArr[l];   // it will be the new currentMax
-                            currentMaxIdx=l;    //update largest frame index
+                            currentMaxIdx=l;    //update currentMaxIdx with new largest first occurance index
                         }
                     }
-                    //swap the frame with the max index with the current string value.
+                    //swap the victim frame with the current ref string page.
                     frame[currentMaxIdx] = refPages[i];
                 }  
                 change = true;
