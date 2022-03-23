@@ -352,7 +352,6 @@ void OPT(int frame[])
                             if(firstOccuranceI==strLen){  //if remaining ref string doesn't contain the memory page's frame
                                 firstOccuranceArr[k]=MAXLIMIT+1; //Maxlimit+1 indicate's that the index is out of bound
                                 k++;                          
-                                firstOccuranceI=i;
                                 break;
                                 }           
                             else{
